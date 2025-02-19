@@ -1,4 +1,4 @@
 package com.damas.objetos;
 
-public class Jogo {
+public class Movimentacao {
 }
