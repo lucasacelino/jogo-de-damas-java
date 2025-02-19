@@ -8,47 +8,26 @@ package com.damas.objetos;
  * @author Leonardo Villeth &lt;lvilleth@cc.ci.ufpb.br&gt;
  * @author José Alisson Rocha da Silva {@link jose.alisson2@academico.ufpb.br}
  */
-public class Pedra implements Peca {
+public abstract class Pedra extends Peca {
+    protected Tabuleiro tabuleiro; // 🔹 Agora `Pedra` tem uma referência ao `Tabuleiro`
 
-    protected Casa casa;
-    protected int tipo;
-
-    /**
-     * @param casa Objeto Casa
-     * @param tipo int tipo de peça (0 = Pedra Branca, 2 = Pedra vermelha) 
-     */
-    public Pedra(Casa casa, int tipo) {
-        this.casa = casa;
-        this.tipo = tipo;
-        casa.colocarPeca(this);
-    }
-    
-    @Override
-    public void mover(Casa destino) {
-        casa.removerPeca();
-        destino.colocarPeca(this);
-        casa = destino;
+    public Pedra(Casa casa, Tabuleiro tabuleiro) {
+        super(casa);
+        this.tabuleiro = tabuleiro;
     }
 
     @Override
     public boolean isMovimentoValido(Casa destino) {
-
-        // SENTIDO UNITÁRIO E DISTANCIA X E Y DA CASA ATUAL ATÉ A CASA DE DESTINO
         int distanciaX = Math.abs(destino.getX() - casa.getX());
         int distanciaY = Math.abs(destino.getY() - casa.getY());
 
-        if ((distanciaX == 0) || (distanciaY == 0)) return false;
-
-        // REGRA DE MOVIMENTO NO CASO DA DISTÂNCIA SER DE 2 CASAS (MOVIMENTO DE COMER PEÇA)
-        if ((distanciaX <= 2 || distanciaY <= 2) && (distanciaX == distanciaY)) {
-            return true;
+        if (distanciaX == 2 && distanciaY == 2) {
+            int meioX = (casa.getX() + destino.getX()) / 2;
+            int meioY = (casa.getY() + destino.getY()) / 2;
+            Casa casaIntermediaria = tabuleiro.getCasa(meioX, meioY);
+            return casaIntermediaria.getPeca() != null && casaIntermediaria.getPeca().getClass() != this.getClass();
         }
 
         return false;
-    }
-
-    @Override
-    public int getTipo() {
-        return tipo;
     }
 }
